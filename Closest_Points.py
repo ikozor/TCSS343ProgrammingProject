@@ -186,7 +186,7 @@ def getInput():
         print("Points:" , printPoints)
         if choice == "B":
             print("Brute Force Algorithm: ")
-            print(bruteForce(testPoints) , closePoint1.stringPoint() , closePoint2.stringPoint())
+            print("Distance: ",bruteForce(testPoints) , "Points: ", closePoint1.stringPoint() , closePoint2.stringPoint())
             print(str(len(testPoints)) + " values given with " + str(iterations) + " iterations, making this a O(n^2) algorithm\n\n" )
         elif choice == "D":
             print("Divide and Conquer Algorithm: ")
@@ -220,13 +220,3 @@ def createPoints():
 
 getInput()
 input("Enter anything to exit: ")
-
-
-
-
-    
-
-
-
-
-    
