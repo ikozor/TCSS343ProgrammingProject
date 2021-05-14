@@ -133,8 +133,8 @@ def checkSplit(Xright , Y , d):
     for i in Y:
         if i.getX() >= d - midPoint.getX() or i.getX() <= d + midPoint.getX():      #if the numbers are further than the min distance between points in the sectors, filter them out
             S.append(i)
-    for i in range(len(S)-7):                                   # check every poit in that distance while keeping the run time O(n)
-        for j in range(7):
+    for i in range(len(S)-3):                                   # check every poit in that distance while keeping the run time O(n)
+        for j in range(3):
             P = S[i]
             Q = S[i+j]
             if distance(P,Q) < d and P != Q:                    # if a point is found, make that point the new distance and return it
@@ -166,21 +166,60 @@ def closestPoint(X,Y):
     
     return dis
 
+def getInput():
+    print("Enter P for premade points")
+    print("Enter C to create new points")
+    testPoints = [Point(-1230.0,1234.0), Point(234.0,23.0), Point(234.0,432.0), Point(3456235.0,341.0), Point(-1204234.0,-123234.0)]
+    premade_or_create = input("Enter: ")
+    if premade_or_create == "C":
+        testPoints = createPoints()
+    elif premade_or_create != "P":
+        print("You know what, you get premade points since you cant follow instructions")
+    
+    if len(testPoints) > 1:
+        print("\nEnter D to find the closest points using the Divide and Conquer Algorithm")
+        print("Enter B to find the closest points using the Brute Force Algorithm")
+        choice = input("Enter: ")
+        printPoints = []
+        for i in testPoints:
+            printPoints.append(i.stringPoint())
+        print("Points:" , printPoints)
+        if choice == "B":
+            print("Brute Force Algorithm: ")
+            print(bruteForce(testPoints) , closePoint1.stringPoint() , closePoint2.stringPoint())
+            print(str(len(testPoints)) + " values given with " + str(iterations) + " iterations, making this a O(n^2) algorithm\n\n" )
+        elif choice == "D":
+            print("Divide and Conquer Algorithm: ")
+            print(divideAndConquer(testPoints) , closePoint1.stringPoint() , closePoint2.stringPoint())
+            print("Prove O(nlg(n)) using masters theorm: \nRecursive equation: T(n) = 2T(n/2) + n \nValues: a = 2 , b = 2, d = 1 \nn^(log_2(2)) = 1 = d \nTherefore the run time is O(nlg(n))")
+    else:
+        print("It's really hard to find the closest distance between points when you do not have at least 2 points...")
 
 
 
 
-testPointsi = [Point(1,3),Point(0,0)]
-testPoints = [Point(0,1),Point(1,3),Point(18,44),Point(19,33),Point(-10,9),Point(17,11),Point(23,3),Point(0,-3),Point(11,5),Point(8,8),Point(10,100),Point(0,0),Point(0,10),Point(0,100),Point(23,23),Point(12,1),Point(54,12),Point(34,34),Point(-1,0)]
-iterations = 0 
-print("Brute Force Algorithm: ")
-print(bruteForce(testPoints) , closePoint1.stringPoint() , closePoint2.stringPoint())
-print(str(len(testPoints)) + " values given with " + str(iterations) + " iterations, making this a O(n^2) algorithm\n\n" )
+def createPoints():
+    newPoint = "Y"
+    result = []
+    while(newPoint != "N"):
+        newPoint = input("New Point? (Enter Y/N): ")
+        if newPoint == "Y":
+            x = input("Enter x value: ")
+            y = input("Enter y value: ")
+            try:
+                x = float(x)
+                y = float(y)
+            except ValueError as e:
+                print(e)
 
-iterations = 0
-print("Divide and Conquer Algorithm: ")
-print(divideAndConquer(testPoints) , closePoint1.stringPoint() , closePoint2.stringPoint())
-print("Prove O(nlg(n)) using masters theorm: \nRecursive equation: 2T(n/2) + n \nValues: a = 2 , b = 2, d = 1 \nn^(log_2(2) = 1 = d \nTherefore the run time is O(nlg(n))")
+            result.append(Point(x,y))
+    return result
+
+
+
+
+getInput()
+input("Enter anything to exit: ")
 
 
 
