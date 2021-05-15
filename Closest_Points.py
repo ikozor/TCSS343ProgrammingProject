@@ -190,8 +190,8 @@ def getInput():
             print(str(len(testPoints)) + " values given with " + str(iterations) + " iterations, making this a O(n^2) algorithm\n\n" )
         elif choice == "D":
             print("Divide and Conquer Algorithm: ")
-            print(divideAndConquer(testPoints) , closePoint1.stringPoint() , closePoint2.stringPoint())
-            print("Prove O(nlg(n)) using masters theorm: \nRecursive equation: T(n) = 2T(n/2) + n \nValues: a = 2 , b = 2, d = 1 \nn^(log_2(2)) = 1 = d \nTherefore the run time is O(nlg(n))")
+            print("Distance: ", divideAndConquer(testPoints) , "Points: ",closePoint1.stringPoint() , closePoint2.stringPoint())
+            print("Prove O(nlg(n)) using masters theorm: \nRecursive equation: T(n) = 2T(n/2) + n \nValues: a = 2 , b = 2, d = 1 \n(log_2(2)) = 1 = d \nTherefore the run time is O(nlg(n))")
     else:
         print("It's really hard to find the closest distance between points when you do not have at least 2 points...")
 
