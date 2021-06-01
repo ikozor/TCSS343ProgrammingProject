@@ -1,6 +1,9 @@
 import math
 import sys
+import random
+import time
 
+# this is my class for the points 
 class Point:
     def __init__(self, x , y):
         self.x = x
@@ -19,8 +22,8 @@ def distance(point1 , point2):
 
 # Global Variables
 iterations = 0
-closePoint1 = Point(0,0)
-closePoint2 = Point(0,0)
+closePoint1 = Point(sys.maxsize,0)
+closePoint2 = Point(-1 * sys.maxsize,0)
 
 # This algorithm is a very simple brute force algorithm, selects a point, then looks at the distance from that point to
 #  every other point. It repeats this with every point and returns the 2 closest point with their distance
@@ -45,8 +48,9 @@ def bruteForce(listPoints):
         check1 += 1
         global closePoint1
         global closePoint2
-        closePoint1 = point1
-        closePoint2 = point2
+        if distance(point1,point2) <= distance(closePoint1,closePoint2):
+            closePoint1 = point1
+            closePoint2 = point2
     return dis
     
 #These are functions are to sort the list in order x and in order y
@@ -124,48 +128,53 @@ def mergeSortY(listPoints):
     
         return listPoints
 
-#For the unlucky case where the closest points are in between of the 2 sorted by x list of points
-def checkSplit(Xright , Y , d):
-    midPoint = Xright[1]
-    S = []
-    global closePoint1
-    global closePoint2
-    for i in Y:
-        if i.getX() >= d - midPoint.getX() or i.getX() <= d + midPoint.getX():      #if the numbers are further than the min distance between points in the sectors, filter them out
-            S.append(i)
-    for i in range(len(S)-3):                                   # check every poit in that distance while keeping the run time O(n)
-        for j in range(3):
-            P = S[i]
-            Q = S[i+j]
-            if distance(P,Q) < d and P != Q:                    # if a point is found, make that point the new distance and return it
-                closePoint2 = Q
-                closePoint1 = P
-                d = distance(P,Q)
-    return d  
-
+# sorts the lists in x and y and runs the recursive algorithm
 def divideAndConquer(listPoints):
     return closestPoint(mergeSortX(listPoints),mergeSortY(listPoints))
-    
 
+#For the unlucky case where the closest points are in between of the 2 sorted by x list of points
+ 
+def stripClosePoints(strip, length  ,  dis):
+    min_num = dis
+ 
+
+    for i in range(length):
+        j = i + 1
+        while j < length and (strip[j].y - strip[i].y) < min_num:
+            min_num = distance(strip[i], strip[j])
+            j += 1
+ 
+    return min_num
+
+# This is my recursive algorithm 
 def closestPoint(X,Y):
     global iterations
     iterations += 1
     if len(X) <= 3:
         return bruteForce(X)
     
-    mid = len(X)//2
+    mid = len(X)//2                             # split the x sorted list in half 
     Xleft = X[:mid]
     Xright = X[mid:]
 
-    dis_left = closestPoint(Xleft , Y)
+    dis_left = closestPoint(Xleft , Y)          # recursive part, 2 times, once for left side and once for right side 
     dis_right = closestPoint(Xright , Y)
 
-    dis = min(dis_left,dis_right)
+    dis = min(dis_left,dis_right)               # after recursion finishes, get the min of left and right
 
-    dis = checkSplit(Xright,Y,dis)
+    # in case the 2 closest points were both in right and left, check that 
+    S_X = []
+    S_Y = []
+    for i in range(len(X)):
+        if abs(X[i].getX() - Xright[0].getX()) < dis:
+            S_X.append(X[i])
+        if abs(Y[i].getX() - Xright[0].getX()) < dis:
+            S_Y.append(Y[i])
     
-    return dis
+    S_X_sorted = mergeSortY(S_X)  
+    return min(dis , stripClosePoints(S_Y , len(S_Y), dis) , stripClosePoints(S_X_sorted , len(S_X), dis))
 
+# For testing if the result is correct    
 def getInput():
     print("Enter P for premade points")
     print("Enter C to create new points")
@@ -195,9 +204,6 @@ def getInput():
     else:
         print("It's really hard to find the closest distance between points when you do not have at least 2 points...")
 
-
-
-
 def createPoints():
     newPoint = "Y"
     result = []
@@ -215,8 +221,33 @@ def createPoints():
             result.append(Point(x,y))
     return result
 
+def Experiment(n):
+    listpoints = []
+    for i in range(n):
+        listpoints.append(Point(random.randint(-100000,100000),random.randint(-100000,100000)))
+    print("Finished making list")
+    print("\n\n")
+
+    # for the Brute Force Algorithm
+    tic = time.perf_counter()
+    fromBF = bruteForce(listpoints)
+    toc = time.perf_counter()
+    print("Brute Force Algorithm:")
+    print("Distance: ", fromBF , "Points: ", closePoint1.stringPoint() , closePoint2.stringPoint())
+    print(f"This took {toc - tic:0.4f} seconds")
+
+    print("\n\n")
+
+    # for the Divide and Conquer Algorithm
+    tic = time.perf_counter()
+    fromDoC = divideAndConquer(listpoints)
+    toc = time.perf_counter()
+    print("Divide and Conquer Algorithm:")
+    print("Distance: ", fromDoC , "Points: ", closePoint1.stringPoint() , closePoint2.stringPoint())
+    print(f"This took {toc - tic:0.4f} seconds")
+    
+    print("\n\n")
 
 
 
-getInput()
-input("Enter anything to exit: ")
+Experiment(1000)
