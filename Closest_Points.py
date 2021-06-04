@@ -250,4 +250,6 @@ def Experiment(n):
 
 
 
-Experiment(1000)
+n = input("Enter the amount of random points: ")
+Experiment(int(n))
+input("Press Enter to Exit")
